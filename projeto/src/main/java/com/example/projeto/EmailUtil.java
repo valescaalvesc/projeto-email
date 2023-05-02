@@ -136,7 +136,7 @@ public class EmailUtil {
 
             // Second part is image attachment
             messageBodyPart = new MimeBodyPart();
-            String filename = "image.png";
+            String filename = "jesus2.png";
             DataSource source = new FileDataSource(filename);
             messageBodyPart.setDataHandler(new DataHandler(source));
             messageBodyPart.setFileName(filename);
