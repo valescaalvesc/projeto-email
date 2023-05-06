@@ -1,5 +1,9 @@
 package com.example.projeto;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import javax.mail.*;
+import javax.mail.internet.MimeBodyPart;
 import java.util.Properties;
 
 public class ReadEmail {
@@ -40,7 +44,39 @@ public class ReadEmail {
         // 6. Retrieve the messages from the folder.
         Message[] messages = inbox.getMessages();
         for (Message message : messages) {
-            message.writeTo(System.out);
+            System.out.println("De: " + message.getFrom()[0].toString());
+            System.out.println("Recebido: " + message.getSentDate());
+            System.out.println("Assunto: " + message.getSubject());
+//            message.writeTo(System.out);
+
+            String contentType = message.getContentType();
+            StringBuilder messageContent= new StringBuilder();
+
+            if (contentType.contains("multipart")) {
+                Multipart multiPart = (Multipart) message.getContent();
+                int numberOfParts = multiPart.getCount();
+                for (int partCount = 0; partCount < numberOfParts; partCount++) {
+                    MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
+                    String partContentType = part.getContentType();
+                    if (partContentType.contains("text/plain")) {
+                        messageContent = new StringBuilder(part.getContent().toString());
+                        break;
+                    } else if (partContentType.contains("text/html")) {
+                        String html = part.getContent().toString();
+                        messageContent = new StringBuilder(Jsoup.parse(html).text());
+                    }
+                }
+            } else if (contentType.contains("text/plain")) {
+                Object content = message.getContent();
+                if (content != null) {
+                    messageContent = new StringBuilder(content.toString());
+                }
+            } else if (contentType.contains("text/html")) {
+                String html = message.getContent().toString();
+                messageContent = new StringBuilder(Jsoup.parse(html).text());
+            }
+
+            System.out.println("Mensagem: " + messageContent);
         }
 
         // 7. Close folder and close store.
