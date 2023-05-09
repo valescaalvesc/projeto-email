@@ -10,8 +10,8 @@ public class LoginScreen extends JFrame {
 
     private JLabel emailLabel = new JLabel("Email:");
     private JLabel passwordLabel = new JLabel("Senha:");
-    private JTextField emailField = new JTextField(20);
-    private JPasswordField passwordField = new JPasswordField(20);
+    private JTextField emailField = new JTextField(5);
+    private JPasswordField passwordField = new JPasswordField(5);
     private JButton loginButton = new JButton("Entrar");
 
     public LoginScreen() {
@@ -22,20 +22,17 @@ public class LoginScreen extends JFrame {
         setSize(ScreenSize.SCREEN_WIDTH, ScreenSize.SCREEN_HEIGHT);
         WindowUtils.centerOnScreen(this);
 
-        JPanel panel = new JPanel(new BorderLayout());
-        JPanel fieldsPanel = new JPanel(new GridLayout(2, 1));
-        JPanel emailPanel = new JPanel(new FlowLayout());
-        emailPanel.add(emailLabel);
-        emailPanel.add(emailField);
-        fieldsPanel.add(emailPanel);
-        JPanel passwordPanel = new JPanel(new FlowLayout());
-        passwordPanel.add(passwordLabel);
-        passwordPanel.add(passwordField);
-        fieldsPanel.add(passwordPanel);
-        panel.add(fieldsPanel, BorderLayout.CENTER);
-        panel.add(loginButton, BorderLayout.SOUTH);
+        JPanel panel = new JPanel(new GridLayout(5, 1));
 
-        add(panel, BorderLayout.CENTER);
+        panel.add(emailLabel);
+        panel.add(emailField);
+
+        panel.add(passwordLabel);
+        panel.add(passwordField);
+
+        panel.add(loginButton);
+        add(panel);
+
         setVisible(true);
     }
 
