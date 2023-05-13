@@ -7,8 +7,8 @@ import javax.mail.internet.MimeBodyPart;
 import java.util.Properties;
 
 public class ReadEmail {
-    public static final String USERNAME = ""; //Inserir aqui o seu e-mail gmail.
-    public static final String PASSWORD = ""; // Inserir aqui não a sua senha do e-mail mas a senha do App que o google gera.
+    public static final String USERNAME = "rodrigofayer26@gmail.com"; //Inserir aqui o seu e-mail gmail.
+    public static final String PASSWORD = "vjqfktfvuupipfvd"; // Inserir aqui não a sua senha do e-mail mas a senha do App que o google gera.
 
     public static void main(String[] args) throws Exception {
         // 1. Setup properties for the mail session.

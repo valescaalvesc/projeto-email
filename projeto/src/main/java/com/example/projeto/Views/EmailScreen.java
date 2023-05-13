@@ -1,27 +1,26 @@
 package com.example.projeto.Views;
 
+import com.example.projeto.Configs.AuthConfig;
+import com.example.projeto.Configs.SessionConfig;
+import com.example.projeto.Utils.EmailUtils;
 import com.example.projeto.Utils.ScreenSize;
 import com.example.projeto.Utils.WindowUtils;
 
+import javax.mail.Session;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.util.Properties;
 
-public class EmailScreen extends JFrame {
-    private JLabel mailServerLabel = new JLabel("Mail Server:");
+public class EmailScreen extends JDialog {
     private JLabel fromLabel = new JLabel("De:");
     private JLabel toLabel = new JLabel("Para:");
-    private JLabel ccLabel = new JLabel("Cc:");
-    private JLabel bccLabel = new JLabel("Bcc:");
     private JLabel subjectLabel = new JLabel("Assunto:");
     private JLabel messageLabel = new JLabel("Mensagem:");
     private JLabel attachmentLabel = new JLabel("Anexo:");
-    private JTextField mailServerField = new JTextField(20);
     private JTextField fromField = new JTextField(20);
     private JTextField toField = new JTextField(20);
-    private JTextField ccField = new JTextField(20);
-    private JTextField bccField = new JTextField(20);
     private JTextField subjectField = new JTextField(20);
     private JTextArea messageArea = new JTextArea(5, 20);
     private JButton sendButton = new JButton("Enviar");
@@ -29,26 +28,19 @@ public class EmailScreen extends JFrame {
     private JButton uploadButton = new JButton("Selecionar arquivo");
     private JTextField attachmentField = new JTextField(20);
 
-    public EmailScreen() {
-        super("Tela de Envio de Email");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public EmailScreen(JFrame parent) {
+        super(parent, "Enviar email", true);
         setLayout(new BorderLayout());
 
         setSize(ScreenSize.SCREEN_WIDTH, ScreenSize.SCREEN_HEIGHT);
-        WindowUtils.centerOnScreen(this);
+        setLocationRelativeTo(parent);
 
         JPanel panel = new JPanel(new BorderLayout());
         JPanel fieldsPanel = new JPanel(new GridLayout(9, 2));
-        fieldsPanel.add(mailServerLabel);
-        fieldsPanel.add(mailServerField);
         fieldsPanel.add(fromLabel);
         fieldsPanel.add(fromField);
         fieldsPanel.add(toLabel);
         fieldsPanel.add(toField);
-//        fieldsPanel.add(ccLabel);
-//        fieldsPanel.add(ccField);
-//        fieldsPanel.add(bccLabel);
-//        fieldsPanel.add(bccField);
         fieldsPanel.add(subjectLabel);
         fieldsPanel.add(subjectField);
         fieldsPanel.add(messageLabel);
@@ -59,6 +51,28 @@ public class EmailScreen extends JFrame {
         attachmentPanel.add(uploadButton, BorderLayout.EAST);
         fieldsPanel.add(attachmentPanel);
         panel.add(fieldsPanel, BorderLayout.CENTER);
+
+        sendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //Properties props = SessionConfig.getProps();
+                String toEmail = getToText();
+                String fromEmail = getFromText();
+                String subject = getSubjectText();
+                String body = getMessageAreaText();
+                String attachment = getAttachmentText();
+
+                Session session = Session.getInstance(EmailUtils.getPropertiesToSendEmails(), AuthConfig.authenticator);
+
+                if (attachment.equals("")){
+                    EmailUtils.sendEmail(session, fromEmail, toEmail, subject, body);
+                }else {
+                    EmailUtils.sendAttachmentEmail(session, fromEmail, toEmail, subject, body, attachment);
+                }
+                JOptionPane.showMessageDialog(EmailScreen.this, "Email enviado com sucesso");
+                setVisible(false);
+            }
+        });
 
         clearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -83,7 +97,6 @@ public class EmailScreen extends JFrame {
         panel.add(buttonsPanel, BorderLayout.SOUTH);
 
         add(panel, BorderLayout.CENTER);
-        setVisible(false);
     }
 
     public JButton getSendButton() {
@@ -92,10 +105,6 @@ public class EmailScreen extends JFrame {
 
     public String getFromText() {
         return fromField.getText();
-    }
-
-    public String  getMailServerFieldText() {
-        return mailServerField.getText();
     }
 
     public String getToText() {
@@ -116,11 +125,8 @@ public class EmailScreen extends JFrame {
 
     public void clean() {
         // redefinindo os campos do formulário
-        mailServerField.setText("");
         fromField.setText("");
         toField.setText("");
-        ccField.setText("");
-        bccField.setText("");
         subjectField.setText("");
         messageArea.setText("");
         attachmentField.setText("");
